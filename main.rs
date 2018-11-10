@@ -15,6 +15,21 @@ fn get_keyboard_input() -> String {
     return input;
 }
 
+fn get_player_number(player1_name: String, player2_name: String) -> u8 {
+    loop {
+        println!("Enter 1 for {}, or 2 for {}", player1_name, player2_name);
+        let input = get_keyboard_input();  
+        match input.parse::<u8>() {
+            Ok(n) => {
+                if n == 1 || n == 2 {
+                    return n;
+                }
+            },
+            Err(error) => println!("error: {}", error), 
+        }
+    }
+} 
+
 fn main() {
     let mut player1 = Player {
         name: String::new(),
@@ -26,6 +41,7 @@ fn main() {
         score: 0,
         games_won: 0,
     };
+
     {
         println!("Enter player one name");
         player1.name = get_keyboard_input();
