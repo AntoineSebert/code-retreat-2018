@@ -12,16 +12,16 @@ struct Player {
 }
 
 /*
- * Get a trimmed String from the keyword.
+ * Reset all the scores to 0.
  */
-fn get_keyboard_input() -> String {
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
-    return input.trim().to_string();
+fn reset_scores(mut players: Vec<Player>) {
+    for player in players.iter_mut() {
+        player.score = 0;
+    } 
 }
 
 /*
- * Get a u8 from the keyboard.
+ * Get a u8 fr m the keyboard.
  * Value can be 0.
  */
 fn get_parsed_input() -> u8 {
@@ -46,6 +46,15 @@ fn get_player_number(player_number: u8) -> u8 {
             return number;
         }
     } 
+}
+
+/*
+ * Get a trimmed String from the keyword.
+ */
+fn get_keyboard_input() -> String {
+    let mut input = String::new();
+    io::stdin().read_line(&mut input).expect("Failed to read line");
+    return input.trim().to_string();
 }
 
 /*
@@ -87,10 +96,27 @@ fn main() {
         },
     }
  
-    let players: Vec<Player> = initialize_players(player_number);
+    let mut players: Vec<Player> = initialize_players(player_number);
  
     let mut count = 0u8;
     loop {
+        let selected_player_info;
+        {
+            /*
+             * Increments player corresponding to given index and returns that player's name and score
+             */
+            let select_player = | players: Vec<Player> | -> (u8, String) {
+                let selected_player = &mut players[get_player_number(player_number) as usize];
+                selected_player.score += 1;
+                (selected_player.score, selected_player.name)
+            }; 
+            selected_player_info = select_player(players);
+        }
+        // if the set has been won, all the scores are reset
+        if selected_player_info.0 == 4u8 {
+            println!("{} has won the set", selected_player_info.1);
+            reset_scores(players);
+        }
         println!("{}", count);
         count += 1;
         if count == 5 {
