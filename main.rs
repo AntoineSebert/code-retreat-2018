@@ -14,10 +14,11 @@ struct Player {
 /*
  * Reset all the scores to 0.
  */
-fn reset_scores(mut players: Vec<Player>) {
+fn reset_scores(mut players: Vec<Player>)->Vec<Player> {
     for player in players.iter_mut() {
         player.score = 0;
-    } 
+    }
+    return players;
 }
 
 /*
@@ -105,16 +106,17 @@ fn main() {
             /*
              * Increments player corresponding to given index and returns that player's name and score
              */
-            let select_player = | players: Vec<Player> | -> (u8, String) {
+            let select_player = | mut players: &Vec<Player> | -> (u8, String) {
                 let selected_player = &mut players[get_player_number(player_number) as usize];
                 selected_player.score += 1;
-                (selected_player.score, selected_player.name)
+                (selected_player.score, selected_player.name.clone())
             }; 
             selected_player_info = select_player(players);
+            players =selected_player_info.0; 
         }
         // if the set has been won, all the scores are reset
-        if selected_player_info.0 == 4u8 {
-            println!("{} has won the set", selected_player_info.1);
+        if selected_player_info.1 == 4u8 {
+            println!("{} has won the set", selected_player_info.2);
             reset_scores(players);
         }
         println!("{}", count);
